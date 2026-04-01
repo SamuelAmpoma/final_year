@@ -51,3 +51,44 @@ export const analyticsAPI = {
   getIncidentsByRegion: () => axios.get(`${API_ENDPOINTS.ANALYTICS}/analytics/incidents-by-region`),
   getResourceUtilization: () => axios.get(`${API_ENDPOINTS.ANALYTICS}/analytics/resource-utilization`),
 };
+
+// Station API
+export const stationAPI = {
+  getAll: () => axios.get(`${API_ENDPOINTS.INCIDENT}/stations`),
+  getById: (id) => axios.get(`${API_ENDPOINTS.INCIDENT}/stations/${id}`),
+  create: (data, token) => axios.post(`${API_ENDPOINTS.INCIDENT}/stations`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+  update: (id, data, token) => axios.put(`${API_ENDPOINTS.INCIDENT}/stations/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+};
+
+// Health Check API
+export const healthCheck = async () => {
+  try {
+    const results = await Promise.allSettled([
+      axios.get(`${API_ENDPOINTS.AUTH}/health`, { timeout: 5000 }).catch(() => 
+        axios.get(`${API_ENDPOINTS.AUTH}/`, { timeout: 5000 })
+      ),
+      axios.get(`${API_ENDPOINTS.INCIDENT}/health`, { timeout: 5000 }).catch(() => 
+        axios.get(`${API_ENDPOINTS.INCIDENT}/`, { timeout: 5000 })
+      ),
+      axios.get(`${API_ENDPOINTS.DISPATCH}/health`, { timeout: 5000 }).catch(() => 
+        axios.get(`${API_ENDPOINTS.DISPATCH}/`, { timeout: 5000 })
+      ),
+      axios.get(`${API_ENDPOINTS.ANALYTICS}/health`, { timeout: 5000 }).catch(() => 
+        axios.get(`${API_ENDPOINTS.ANALYTICS}/`, { timeout: 5000 })
+      ),
+    ]);
+    return {
+      auth: results[0].status === 'fulfilled',
+      incident: results[1].status === 'fulfilled',
+      dispatch: results[2].status === 'fulfilled',
+      analytics: results[3].status === 'fulfilled',
+    };
+  } catch (error) {
+    console.error('Health check failed:', error);
+    return { auth: false, incident: false, dispatch: false, analytics: false };
+  }
+};
