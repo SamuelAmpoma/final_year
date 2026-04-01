@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: emergency-response-db
+    environment:
+      POSTGRES_DB: emergency_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - emergency-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Auth Service
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: emergency_db
+      NODE_ENV: development
+      JWT_SECRET: your-secret-key
+      JWT_REFRESH_SECRET: your-refresh-secret
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - emergency-network
+    command: npm run dev
+
+  # Incident Service
+  incident-service:
+    build: ./incident-service
+    container_name: incident-service
+    ports:
+      - "3002:3002"
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: emergency_db
+      NODE_ENV: development
+      AUTH_SERVICE_URL: http://auth-service:3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - emergency-network
+    command: npm run dev
+
+  # Dispatch Service
+  dispatch-service:
+    build: ./dispatch-service
+    container_name: dispatch-service
+    ports:
+      - "3003:3003"
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: emergency_db
+      NODE_ENV: development
+      INCIDENT_SERVICE_URL: http://incident-service:3002
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - emergency-network
+    command: npm run dev
+
+  # Analytics Service
+  analytics-service:
+    build: ./analytics-service
+    container_name: analytics-service
+    ports:
+      - "3004:3004"
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: emergency_db
+      NODE_ENV: development
+      INCIDENT_SERVICE_URL: http://incident-service:3002
+      DISPATCH_SERVICE_URL: http://dispatch-service:3003
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - emergency-network
+    command: npm run dev
+
+networks:
+  emergency-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
