@@ -100,10 +100,10 @@ function Sidebar({ active, onNav, user, onLogout, openIncidents }) {
           <>
             <div className="nav-section-label" style={{ marginTop: 16 }}>API Documentation</div>
             {[
-              { href: 'http://localhost:3001/api-docs', icon: '🔐', label: 'Auth Service' },
-              { href: 'http://localhost:3002/api-docs', icon: '📋', label: 'Incident Service' },
-              { href: 'http://localhost:3003/api-docs', icon: '📡', label: 'Dispatch Service' },
-              { href: 'http://localhost:3004/api-docs', icon: '📊', label: 'Analytics Service' },
+              { href: 'https://auth-service-25u8.onrender.com/api-docs', icon: '🔐', label: 'Auth Service' },
+              { href: 'https://incident-service-ku7i.onrender.com/api-docs', icon: '📋', label: 'Incident Service' },
+              { href: 'https://dispatch-service-w37p.onrender.com/api-docs', icon: '📡', label: 'Dispatch Service' },
+              { href: 'https://final-year-013s.onrender.com/api-docs', icon: '📊', label: 'Analytics Service' },
             ].map(link => (
               <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="nav-item">
                 <span className="nav-icon">{link.icon}</span>

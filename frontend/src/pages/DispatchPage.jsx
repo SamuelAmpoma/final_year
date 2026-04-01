@@ -70,7 +70,7 @@ export default function DispatchPage() {
 
   const connectSocket = () => {
     try {
-      const socket = io('http://localhost:3003', { transports: ['websocket', 'polling'] });
+      const socket = io('https://dispatch-service-w37p.onrender.com', { transports: ['websocket', 'polling'] });
       socketRef.current = socket;
 
       socket.on('connect', () => {

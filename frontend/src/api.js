@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 const API_ENDPOINTS = {
-  AUTH: 'http://localhost:3001',
-  INCIDENT: 'http://localhost:3002',
-  DISPATCH: 'http://localhost:3003',
-  ANALYTICS: 'http://localhost:3004',
+  AUTH: 'https://auth-service-25u8.onrender.com',
+  INCIDENT: 'https://incident-service-ku7i.onrender.com',
+  DISPATCH: 'https://dispatch-service-w37p.onrender.com',
+  ANALYTICS: 'https://final-year-013s.onrender.com',
 };
 
 // Auth API
