@@ -1,0 +1,60 @@
+services:
+  # Analytics Service
+  - type: web
+    name: analytics-service
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd backend/analytics-service && npm install && npm run build
+    startCommand: cd backend/analytics-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # Auth Service
+  - type: web
+    name: auth-service
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd backend/auth-service && npm install && npm run build
+    startCommand: cd backend/auth-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # Incident Service
+  - type: web
+    name: incident-service
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd backend/incident-service && npm install && npm run build
+    startCommand: cd backend/incident-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # Dispatch Service
+  - type: web
+    name: dispatch-service
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd backend/dispatch-service && npm install && npm run build
+    startCommand: cd backend/dispatch-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # Frontend
+  - type: web
+    name: frontend
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm run preview
+    envVars:
+      - key: NODE_ENV
+        value: production

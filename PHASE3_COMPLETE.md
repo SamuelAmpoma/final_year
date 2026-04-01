@@ -103,24 +103,24 @@
 
 All features are fully integrated with the backend microservices:
 
-### Auth Service (Port 3001)
+### Auth Service (Port 8081)
 - User authentication and JWT token generation
 - Role-based authorization
 - Session management
 
-### Incident Service (Port 3002)
+### Incident Service (Port 8082)
 - Incident creation and management
 - Automatic nearest responder calculation
 - Status tracking (CREATED → DISPATCHED → IN_PROGRESS → RESOLVED)
 - Full incident details retrieval
 
-### Dispatch Service (Port 3003)
+### Dispatch Service (Port 8083)
 - Vehicle location updates
-- Real-time Socket.IO streaming
+- Real-time WebSocket streaming
 - Vehicle status management
 - Live GPS tracking
 
-### Analytics Service (Port 3004)
+### Analytics Service (Port 8084)
 - Response time calculations
 - Regional incident statistics
 - Resource utilization metrics
@@ -132,11 +132,11 @@ All features are fully integrated with the backend microservices:
 
 ### Starting the System:
 ```bash
-# Frontend (port 5173)
-cd frontend && npm run dev
+# Frontend (already running on port 5173)
+npm run dev
 
-# Backend services (running on ports 3001-3004)
-# Each Node.js service runs independently via npm run dev
+# Backend services (running on ports 8081-8084)
+# All Java services are running independently
 ```
 
 ### Workflow:
@@ -168,19 +168,18 @@ cd frontend && npm run dev
 ## 🎯 Technical Stack
 
 **Frontend:**
-- React 19 with Vite 8
-- Leaflet.js + react-leaflet (mapping)
+- HTML5, CSS3, JavaScript (ES6+)
+- Vite (development server)
+- Leaflet.js (mapping)
 - Chart.js (analytics)
-- Socket.IO Client (real-time communication)
-- Axios (HTTP client)
+- STOMP.js (WebSocket communication)
 
 **Backend:**
-- Node.js 18+ with TypeScript 5.2
-- Express.js 4.18 (REST API framework)
-- TypeORM 0.3 (database ORM)
-- PostgreSQL via Neon Cloud (data persistence)
-- JWT + bcryptjs (authentication)
-- Socket.IO 4.7 (real-time communication)
+- Spring Boot 3.x (Java 17+)
+- PostgreSQL (data persistence)
+- JWT (authentication)
+- Spring WebSocket (real-time communication)
+- Spring WebFlux (reactive APIs)
 
 ---
 

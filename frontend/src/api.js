@@ -7,92 +7,47 @@ const API_ENDPOINTS = {
   ANALYTICS: 'http://localhost:3004',
 };
 
-// Helper: get stored token
-const getToken = () => localStorage.getItem('token');
-
-// Helper: make auth header
-const authHeader = (token) => ({
-  headers: { Authorization: `Bearer ${token || getToken()}` }
-});
-
-// ─── Auth API ────────────────────────────────────────
+// Auth API
 export const authAPI = {
   register: (data) => axios.post(`${API_ENDPOINTS.AUTH}/auth/register`, data),
   login: (email, password) => axios.post(`${API_ENDPOINTS.AUTH}/auth/login`, { email, password }),
-  refreshToken: (refreshToken) => axios.post(`${API_ENDPOINTS.AUTH}/auth/refresh-token`, { refreshToken }),
-  profile: (token) => axios.get(`${API_ENDPOINTS.AUTH}/auth/profile`, authHeader(token)),
+  profile: (token) => axios.get(`${API_ENDPOINTS.AUTH}/auth/profile`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
 };
 
-// ─── Incident API ────────────────────────────────────
+// Incident API
 export const incidentAPI = {
-  create: (data) => axios.post(`${API_ENDPOINTS.INCIDENT}/incidents`, data, authHeader()),
-  getAll: () => axios.get(`${API_ENDPOINTS.INCIDENT}/incidents`, authHeader()),
-  getById: (id) => axios.get(`${API_ENDPOINTS.INCIDENT}/incidents/${id}`, authHeader()),
-  getOpen: () => axios.get(`${API_ENDPOINTS.INCIDENT}/incidents/open`, authHeader()),
-  updateStatus: (id, status) => axios.put(`${API_ENDPOINTS.INCIDENT}/incidents/${id}/status`, { status }, authHeader()),
-  assignUnit: (id, data) => axios.put(`${API_ENDPOINTS.INCIDENT}/incidents/${id}/assign`, data, authHeader()),
+  create: (data, token) => axios.post(`${API_ENDPOINTS.INCIDENT}/incidents`, data, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+  getAll: (token) => axios.get(`${API_ENDPOINTS.INCIDENT}/incidents`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+  getById: (id, token) => axios.get(`${API_ENDPOINTS.INCIDENT}/incidents/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+  getOpen: (token) => axios.get(`${API_ENDPOINTS.INCIDENT}/incidents/open`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+  updateStatus: (id, status, token) => axios.put(`${API_ENDPOINTS.INCIDENT}/incidents/${id}/status`, { status }, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+  getResponders: () => axios.get(`${API_ENDPOINTS.INCIDENT}/responders`),
+  getStations: () => axios.get(`${API_ENDPOINTS.INCIDENT}/stations`),
 };
 
-// ─── Stations API ────────────────────────────────────
-export const stationAPI = {
-  getAll: () => axios.get(`${API_ENDPOINTS.INCIDENT}/stations`),
-  getById: (id) => axios.get(`${API_ENDPOINTS.INCIDENT}/stations/${id}`),
-  getByType: (type) => axios.get(`${API_ENDPOINTS.INCIDENT}/stations/type/${type}`),
-  create: (data) => axios.post(`${API_ENDPOINTS.INCIDENT}/stations`, data, authHeader()),
-  updateAvailability: (id, available) =>
-    axios.put(`${API_ENDPOINTS.INCIDENT}/stations/${id}/availability?available=${available}`, {}, authHeader()),
-  updateCapacity: (id, capacity, occupancy) =>
-    axios.put(`${API_ENDPOINTS.INCIDENT}/stations/${id}/capacity?capacity=${capacity}&occupancy=${occupancy}`, {}, authHeader()),
-};
-
-// ─── Dispatch / Vehicles API ─────────────────────────
+// Dispatch API
 export const dispatchAPI = {
-  getVehicles: async () => {
-    const res = await axios.get(`${API_ENDPOINTS.DISPATCH}/vehicles`);
-    if (res.data && Array.isArray(res.data)) {
-      res.data = res.data.map(v => ({ ...v, vehicleId: v.registrationNumber }));
-    }
-    return res;
-  },
-  registerVehicle: (data) => {
-    const payload = {
-      ...data,
-      vehicleType: data.vehicleType?.toUpperCase() || 'AMBULANCE',
-      registrationNumber: data.vehicleId,
-      stationId: Number(data.stationId) || 1,
-      stationName: data.stationName || 'Headquarters',
-      driverName: data.driverName || 'Unassigned',
-      driverPhone: data.driverPhone || '0000000000',
-      latitude: data.latitude || 5.6037,
-      longitude: data.longitude || -0.187,
-    };
-    console.log('Final Payload before dispatch registration:', payload);
-    return axios.post(`${API_ENDPOINTS.DISPATCH}/vehicles/register`, payload);
-  },
-  getVehicleLocation: (id) => axios.get(`${API_ENDPOINTS.DISPATCH}/vehicles/${id}/location`),
-  updateLocation: (vehicleId, data) => // Note: backend expects vehicleId = DB ID
-    axios.post(`${API_ENDPOINTS.DISPATCH}/vehicles/location`, { vehicleId, ...data }),
-  updateVehicleStatus: (id, status) =>
-    axios.put(`${API_ENDPOINTS.DISPATCH}/vehicles/${id}/status?status=${status}`, {}),
+  getVehicles: () => axios.get(`${API_ENDPOINTS.DISPATCH}/vehicles`),
+  registerVehicle: (data) => axios.post(`${API_ENDPOINTS.DISPATCH}/vehicles/register`, data),
+  updateLocation: (vehicleId, data) => axios.post(`${API_ENDPOINTS.DISPATCH}/vehicles/location`, { vehicleId, ...data }),
+  updateVehicleStatus: (vehicleId, status) => axios.put(`${API_ENDPOINTS.DISPATCH}/vehicles/${vehicleId}/status`, { status }),
 };
 
-// ─── Analytics API ───────────────────────────────────
+// Analytics API
 export const analyticsAPI = {
   getResponseTimes: () => axios.get(`${API_ENDPOINTS.ANALYTICS}/analytics/response-times`),
   getIncidentsByRegion: () => axios.get(`${API_ENDPOINTS.ANALYTICS}/analytics/incidents-by-region`),
   getResourceUtilization: () => axios.get(`${API_ENDPOINTS.ANALYTICS}/analytics/resource-utilization`),
-};
-
-// ─── Health checks ───────────────────────────────────
-export const healthCheck = async () => {
-  const results = {};
-  for (const [name, url] of Object.entries(API_ENDPOINTS)) {
-    try {
-      const res = await axios.get(`${url}/health`, { timeout: 3000 });
-      results[name] = { ok: true, message: res.data?.status || 'Running' };
-    } catch {
-      results[name] = { ok: false, message: 'Offline' };
-    }
-  }
-  return results;
 };
