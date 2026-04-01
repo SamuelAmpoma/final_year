@@ -44,8 +44,8 @@ DB_PASSWORD=your_password
 DB_NAME=emergency_db
 
 # JWT
-JWT_SECRET=your-secret-key
-JWT_REFRESH_SECRET=your-refresh-secret
+JWT_SECRET=generate-a-secure-random-string-at-least-32-chars
+JWT_REFRESH_SECRET=generate-another-secure-random-string-at-least-32-chars
 JWT_EXPIRATION=3600
 JWT_REFRESH_EXPIRATION=604800
 

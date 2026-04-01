@@ -33,8 +33,8 @@ services:
       DB_PASSWORD: postgres
       DB_NAME: emergency_db
       NODE_ENV: development
-      JWT_SECRET: your-secret-key
-      JWT_REFRESH_SECRET: your-refresh-secret
+      JWT_SECRET: ems-gh-jwt-a7f3c9e2d1b8k4m6n0p5q8r2s7t1u9w3x6y0z4
+      JWT_REFRESH_SECRET: ems-gh-refresh-b2d4f6h8j0l3n5p7r9t1v3x5z7a9c1e3g5i7k9
     depends_on:
       postgres:
         condition: service_healthy

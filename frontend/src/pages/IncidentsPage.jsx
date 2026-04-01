@@ -281,7 +281,10 @@ export default function IncidentsPage() {
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ height: 600 }}>
             <MapContainer center={[5.6037, -0.187]} zoom={11} style={{ height: '100%', width: '100%' }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='© OpenStreetMap contributors' />
+              <TileLayer 
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" 
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              />
               {filtered.filter(i => i.latitude && i.longitude).map(inc => (
                 <Marker key={inc.id} position={[inc.latitude, inc.longitude]} icon={incidentIcon}>
                   <Popup>
@@ -426,7 +429,10 @@ export default function IncidentsPage() {
                 <label className="form-label">Or click on the map to pin the exact location</label>
                 <div className="map-wrapper" style={{ height: 280, marginBottom: 8 }}>
                   <MapContainer center={pickedLocation ? [pickedLocation.lat, pickedLocation.lng] : [5.6037, -0.187]} zoom={pickedLocation ? 14 : 11} style={{ height: '100%', width: '100%' }}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='© OpenStreetMap' />
+                    <TileLayer 
+                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" 
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    />
                     <LocationPicker onPick={handleLocationPick} />
                     {pickedLocation && (
                       <Marker position={[pickedLocation.lat, pickedLocation.lng]} icon={incidentIcon}>

@@ -101,7 +101,18 @@ export default function DispatchPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await dispatchAPI.registerVehicle(regForm);
+      const payload = {
+        ...regForm,
+        registrationNumber: regForm.vehicleId,
+        vehicleType: regForm.vehicleType?.toUpperCase() || 'AMBULANCE',
+        stationId: Number(regForm.stationId) || 1,
+        stationName: 'Headquarters',
+        driverName: 'Unassigned',
+        driverPhone: '0000000000',
+        latitude: 5.6037,
+        longitude: -0.187,
+      };
+      await dispatchAPI.registerVehicle(payload);
       addLog(`✅ Vehicle ${regForm.vehicleId} registered`);
       setShowRegister(false);
       setRegForm({ vehicleId: '', vehicleType: 'AMBULANCE', stationId: '' });
@@ -132,7 +143,7 @@ export default function DispatchPage() {
           const newLat = v.latitude + (Math.random() - 0.5) * 0.003;
           const newLng = v.longitude + (Math.random() - 0.5) * 0.003;
           socketRef.current.emit('location-update', {
-            vehicleId: v.vehicleId,
+            vehicleId: v.id,
             latitude: newLat,
             longitude: newLng,
             status: v.status || 'ACTIVE',
@@ -188,7 +199,10 @@ export default function DispatchPage() {
           </div>
           <div style={{ height: 450 }}>
             <MapContainer center={[5.6037, -0.187]} zoom={11} style={{ height: '100%', width: '100%' }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='© OpenStreetMap' />
+              <TileLayer 
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" 
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              />
               {vehiclesOnMap.map(v => (
                 <Marker key={v.id || v.vehicleId} position={[v.latitude, v.longitude]} icon={makeVehicleIcon(v.vehicleType)}>
                   <Popup>
@@ -333,8 +347,9 @@ export default function DispatchPage() {
                 <select className="form-select" value={regForm.vehicleType}
                   onChange={e => setRegForm({ ...regForm, vehicleType: e.target.value })}>
                   <option value="AMBULANCE">🚑 Ambulance</option>
-                  <option value="POLICE">🚓 Police Vehicle</option>
-                  <option value="FIRE_TRUCK">🚒 Fire Truck</option>
+                  <option value="POLICE_CAR">🚓 Police Vehicle</option>
+                  <option value="FIRE_ENGINE">🚒 Fire Truck</option>
+                  <option value="RESCUE_UNIT">🚁 Rescue Unit</option>
                 </select>
               </div>
               <div className="form-group">

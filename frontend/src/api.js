@@ -47,13 +47,33 @@ export const stationAPI = {
 
 // ─── Dispatch / Vehicles API ─────────────────────────
 export const dispatchAPI = {
-  getVehicles: () => axios.get(`${API_ENDPOINTS.DISPATCH}/vehicles`),
-  registerVehicle: (data) => axios.post(`${API_ENDPOINTS.DISPATCH}/vehicles/register`, data),
+  getVehicles: async () => {
+    const res = await axios.get(`${API_ENDPOINTS.DISPATCH}/vehicles`);
+    if (res.data && Array.isArray(res.data)) {
+      res.data = res.data.map(v => ({ ...v, vehicleId: v.registrationNumber }));
+    }
+    return res;
+  },
+  registerVehicle: (data) => {
+    const payload = {
+      ...data,
+      vehicleType: data.vehicleType?.toUpperCase() || 'AMBULANCE',
+      registrationNumber: data.vehicleId,
+      stationId: Number(data.stationId) || 1,
+      stationName: data.stationName || 'Headquarters',
+      driverName: data.driverName || 'Unassigned',
+      driverPhone: data.driverPhone || '0000000000',
+      latitude: data.latitude || 5.6037,
+      longitude: data.longitude || -0.187,
+    };
+    console.log('Final Payload before dispatch registration:', payload);
+    return axios.post(`${API_ENDPOINTS.DISPATCH}/vehicles/register`, payload);
+  },
   getVehicleLocation: (id) => axios.get(`${API_ENDPOINTS.DISPATCH}/vehicles/${id}/location`),
-  updateLocation: (vehicleId, data) =>
+  updateLocation: (vehicleId, data) => // Note: backend expects vehicleId = DB ID
     axios.post(`${API_ENDPOINTS.DISPATCH}/vehicles/location`, { vehicleId, ...data }),
-  updateVehicleStatus: (vehicleId, status) =>
-    axios.put(`${API_ENDPOINTS.DISPATCH}/vehicles/${vehicleId}/status`, { status }),
+  updateVehicleStatus: (id, status) =>
+    axios.put(`${API_ENDPOINTS.DISPATCH}/vehicles/${id}/status?status=${status}`, {}),
 };
 
 // ─── Analytics API ───────────────────────────────────

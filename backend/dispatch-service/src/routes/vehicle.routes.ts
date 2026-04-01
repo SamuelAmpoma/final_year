@@ -7,7 +7,8 @@ const router = Router();
 const vehicleService = new VehicleService();
 
 const registerVehicleSchema = Joi.object({
-  registrationNumber: Joi.string().required(),
+  registrationNumber: Joi.string().optional(),
+  vehicleId: Joi.string().optional(),
   vehicleType: Joi.string()
     .valid('AMBULANCE', 'FIRE_ENGINE', 'POLICE_CAR', 'RESCUE_UNIT')
     .required(),
@@ -63,14 +64,25 @@ const locationUpdateSchema = Joi.object({
  */
 router.post('/register', async (req: Request, res: Response) => {
   try {
+    console.log('POST /vehicles/register received body:', req.body);
     const { error, value } = registerVehicleSchema.validate(req.body);
     if (error) {
+      console.error('Validation error for registration:', error.details[0].message);
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    const vehicle = await vehicleService.registerVehicle(value);
+    const payload = {
+      ...value,
+      registrationNumber: value.registrationNumber || value.vehicleId
+    };
+    if (!payload.registrationNumber) {
+      return res.status(400).json({ message: '"registrationNumber" or "vehicleId" is required' });
+    }
+
+    const vehicle = await vehicleService.registerVehicle(payload);
     res.status(201).json(vehicle);
   } catch (error: any) {
+    console.error('Error in registerVehicle:', error.message);
     res.status(400).json({ message: error.message });
   }
 });

@@ -66,11 +66,11 @@ export default function HospitalAdminPage({ user }) {
     }
   };
 
-  const toggleAmbulance = async (vehicleId, currentStatus) => {
+  const toggleAmbulance = async (id, currentStatus) => {
     const newStatus = currentStatus === 'AVAILABLE' ? 'ON_DUTY' : 'AVAILABLE';
     try {
-      await dispatchAPI.updateVehicleStatus(vehicleId, newStatus);
-      showMsg(`✅ Ambulance ${vehicleId} status updated`);
+      await dispatchAPI.updateVehicleStatus(id, newStatus);
+      showMsg(`✅ Ambulance status updated`);
       await load();
     } catch (err) {
       showMsg(err.response?.data?.message || 'Failed to update ambulance status', true);
@@ -219,7 +219,7 @@ export default function HospitalAdminPage({ user }) {
                     <td>
                       <button
                         className={`btn btn-sm ${v.status === 'AVAILABLE' ? 'btn-ghost' : 'btn-success'}`}
-                        onClick={() => toggleAmbulance(v.vehicleId, v.status)}
+                        onClick={() => toggleAmbulance(v.id, v.status)}
                         disabled={v.incidentId}
                         title={v.incidentId ? 'Cannot change — ambulance is on an active dispatch' : ''}
                       >

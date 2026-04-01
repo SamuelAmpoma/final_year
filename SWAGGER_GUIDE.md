@@ -7,10 +7,10 @@ Ensure each service is running before accessing these links:
 
 | Service | Port | Documentation Link |
 |---------|------|--------------------|
-| **Identity & Auth** | `8081` | [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html) |
-| **Emergency Incidents** | `8082` | [http://localhost:8082/swagger-ui.html](http://localhost:8082/swagger-ui.html) |
-| **Dispatch Tracking** | `8083` | [http://localhost:8083/swagger-ui.html](http://localhost:8083/swagger-ui.html) |
-| **Analytics Service** | `8084` | [http://localhost:8084/swagger-ui.html](http://localhost:8084/swagger-ui.html) |
+| **Identity & Auth** | `3001` | [http://localhost:3001/api-docs](http://localhost:3001/api-docs) |
+| **Emergency Incidents** | `3002` | [http://localhost:3002/api-docs](http://localhost:3002/api-docs) |
+| **Dispatch Tracking** | `3003` | [http://localhost:3003/api-docs](http://localhost:3003/api-docs) |
+| **Analytics Service** | `3004` | [http://localhost:3004/api-docs](http://localhost:3004/api-docs) |
 
 ## 🔑 Authentication
 Most endpoints (except login/register) are protected by **JWT Authentication**.
@@ -36,7 +36,7 @@ Most endpoints (except login/register) are protected by **JWT Authentication**.
 ### 🚑 Dispatch Service
 - `GET /vehicles`: List all emergency vehicles and their locations.
 - `POST /vehicles/location`: Update vehicle GPS coordinates.
-- `/ws`: WebSocket endpoint for real-time tracking.
+- WebSocket via Socket.IO for real-time tracking.
 
 ### 📊 Analytics Service
 - `GET /analytics/response-times`: View response efficiency data.
